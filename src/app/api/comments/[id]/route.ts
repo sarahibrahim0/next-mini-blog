@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/utils/db';
 import { verifyToken } from "@/utils/verifyToken";
 import { UpdateCommentDto } from '@/utils/dtos';
+import { applyCors } from '@/lib/cors'
+
+export async function OPTIONS() {
+  const response = new NextResponse(null, { status: 200 });
+  applyCors(response);
+  return response;
+}
 
 interface Props {
     params: Promise<{ id: string }>;
@@ -18,15 +25,19 @@ export async function PUT(request: NextRequest, { params }: Props) {
         const { id } = await params;
         const comment = await prisma.comment.findUnique({ where: { id: parseInt(id) } });
         if (!comment) {
-            return NextResponse.json({ message: 'comment not found' }, { status: 404 });
+            const response = NextResponse.json({ message: 'comment not found' }, { status: 404 });
+            applyCors(response);
+            return response;
         }
 
         const user = verifyToken(request);
         if (user === null || user.id !== comment.userId) {
-            return NextResponse.json(
+            const response = NextResponse.json(
                 { message: 'you are not allowed, access denied' },
                 { status: 403 }
-            )
+            );
+            applyCors(response);
+            return response;
         }
 
         const body = await request.json() as UpdateCommentDto;
@@ -35,13 +46,17 @@ export async function PUT(request: NextRequest, { params }: Props) {
             data: { text: body.text }
         });
 
-        return NextResponse.json(updatedComment, { status: 200 });
+        const response = NextResponse.json(updatedComment, { status: 200 });
+        applyCors(response);
+        return response;
 
     } catch (error) {
-        return NextResponse.json(
+        const response = NextResponse.json(
             { message: 'internal server error' },
             { status: 500 }
-        )
+        );
+        applyCors(response);
+        return response;
     }
 }
 
@@ -56,33 +71,43 @@ export async function DELETE(request: NextRequest, { params }: Props) {
         const { id } = await params;
         const comment = await prisma.comment.findUnique({ where: { id: parseInt(id) } });
         if (!comment) {
-            return NextResponse.json({ message: 'comment not found' }, { status: 404 });
+            const response = NextResponse.json({ message: 'comment not found' }, { status: 404 });
+            applyCors(response);
+            return response;
         }
 
         const user = verifyToken(request);
         if (user === null) {
-            return NextResponse.json(
+            const response = NextResponse.json(
                 { message: 'no token provided, access denied' },
                 { status: 401 }
-            )
+            );
+            applyCors(response);
+            return response;
         }
 
         if (user.isAdmin || user.id === comment.userId) {
             await prisma.comment.delete({ where: { id: parseInt(id) } });
-            return NextResponse.json(
+            const response = NextResponse.json(
                 { message: 'comment deleted' },
                 { status: 200 }
-            )
+            );
+            applyCors(response);
+            return response;
         }
 
-        return NextResponse.json(
+        const response = NextResponse.json(
             { message: 'you are not allowed, access denied' },
             { status: 403 }
-        )
+        );
+        applyCors(response);
+        return response;
     } catch (error) {
-        return NextResponse.json(
+        const response = NextResponse.json(
             { message: 'internal server error' },
             { status: 500 }
-        )
+        );
+        applyCors(response);
+        return response;
     }
 }

@@ -6,6 +6,13 @@ import bcrypt from 'bcryptjs';
 import { updateUserSchema } from '@/utils/validationSchemas';
 import jwt from 'jsonwebtoken';
 import { JWTPayload } from '@/utils/types';
+import { applyCors } from '@/lib/cors'
+
+export async function OPTIONS() {
+  const response = new NextResponse(null, { status: 200 });
+  applyCors(response);
+  return response;
+}
 interface Props {
     params: Promise<{ id: string }>;
 }
@@ -24,10 +31,12 @@ export async function DELETE(request: NextRequest, { params }: Props) {
             include: { comments: true }
         });
         if (!user) {
-            return NextResponse.json(
+            const response = NextResponse.json(
                 { message: 'user not found' },
                 { status: 404 }
             );
+            applyCors(response);
+            return response;
         };
 
 
@@ -38,23 +47,29 @@ export async function DELETE(request: NextRequest, { params }: Props) {
         if (userFromToken !== null && userFromToken.id === user.id) {
             // deleting the user
             await prisma.user.delete({ where: { id: parseInt(resolvedParams.id) } });
-            return NextResponse.json(
+            const response = NextResponse.json(
                 { message: 'your profile (account) has been deleted' },
                 { status: 200 }
             );
+            applyCors(response);
+            return response;
         }
 
-        return NextResponse.json(
+        const response = NextResponse.json(
             { message: 'only user himself can delete his profile, forbidden' },
             { status: 403 }
-        )
+        );
+        applyCors(response);
+        return response;
 
-    } catch (error) {
-        return NextResponse.json(
-            { message: 'internal server error' },
-            { status: 500 }
-        )
-    }
+  } catch (error) {
+    const response = NextResponse.json(
+        { message: 'internal server error' },
+        { status: 500 }
+    );
+    applyCors(response);
+    return response;
+  }
 }
 
 
@@ -79,25 +94,33 @@ export async function GET(request: NextRequest, { params }: Props) {
     });
 
     if(!user) {
-        return NextResponse.json({ message: 'user not found' }, { status: 404 });
+        const response = NextResponse.json({ message: 'user not found' }, { status: 404 });
+        applyCors(response);
+        return response;
     }
 
     const userFromToken = verifyToken(request);
     if(userFromToken === null || userFromToken.id !== user.id){
-        return NextResponse.json(
+        const response = NextResponse.json(
             { message: 'you are not allowed, access denied' },
             { status: 403 }
-        )
+        );
+        applyCors(response);
+        return response;
     }
 
-    return NextResponse.json(user, { status: 200 });
+    const response = NextResponse.json(user, { status: 200 });
+    applyCors(response);
+    return response;
 
-  } catch (error) {
-    return NextResponse.json(
-        { message: 'internal server error' },
-        { status: 500 }
-    )
-  }
+    } catch (error) {
+        const response = NextResponse.json(
+            { message: 'internal server error' },
+            { status: 500 }
+        );
+        applyCors(response);
+        return response;
+    }
 }
 
 
@@ -112,21 +135,25 @@ export async function PUT(request: NextRequest, { params } : Props) {
         const resolvedParams = await params;
         const user = await prisma.user.findUnique({ where: { id: parseInt(resolvedParams.id) }});
         if(!user) {
-            return NextResponse.json({ message: 'user not found' }, { status: 404 });
+            const response = NextResponse.json({ message: 'user not found' }, { status: 404 });
+            applyCors(response);
+            return response;
         }
 
         const userFromToken = verifyToken(request);
         if(userFromToken === null || userFromToken.id !== user.id) {
-            return NextResponse.json(
+            const response = NextResponse.json(
                 { message: 'you are not allowed, access denied' },
                 { status: 403 }
-            )
+            );
+            applyCors(response);
+            return response;
         }
 
         const body = await request.json() as UpdateUserDto;
         const validation = updateUserSchema.safeParse(body);
         if(!validation.success) {
-          return NextResponse.json(
+          const response = NextResponse.json(
         {
           message: validation?.error.issues
             .map((issue) => issue.message)
@@ -134,6 +161,8 @@ export async function PUT(request: NextRequest, { params } : Props) {
         },
         { status: 400 }
       );
+          applyCors(response);
+          return response;
         }
 
         if(body.password) {
@@ -150,7 +179,9 @@ export async function PUT(request: NextRequest, { params } : Props) {
         });
 
         const { password, ...other } = updatedUser;
-        return NextResponse.json({ ...other }, { status: 200 });
+        const response = NextResponse.json({ ...other }, { status: 200 });
+        applyCors(response);
+        return response;
 
     } catch (error) {
         return NextResponse.json(

@@ -5,12 +5,19 @@ import prisma from "@/utils/db";
 import bcrypt from "bcryptjs";
 import { JWTPayload } from '@/utils/types';
 import { generateJWT, setCookie } from "@/utils/generateToken";
+import { applyCors } from '@/lib/cors'
+
+export async function OPTIONS() {
+  const response = new NextResponse(null, { status: 200 });
+  applyCors(response);
+  return response;
+}
 export async function POST(req: NextRequest ) {
   try {
     const body = (await req.json()) as RegisterUserDto;
     const validation = registerSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         {
           message: validation?.error.issues
             .map((issue) => issue.message)
@@ -18,6 +25,8 @@ export async function POST(req: NextRequest ) {
         },
         { status: 400 }
       );
+      applyCors(response);
+      return response;
     }
     const user = await prisma.user.findUnique({
       where: {
@@ -25,10 +34,12 @@ export async function POST(req: NextRequest ) {
       },
     });
     if (user) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { message: "user is already registered" },
         { status: 400 }
       );
+      applyCors(response);
+      return response;
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -50,11 +61,15 @@ export async function POST(req: NextRequest ) {
     const token = generateJWT(jwtPayload);
     const cookie = setCookie(jwtPayload);
 
-    return NextResponse.json({...newUser , token} , { status: 201  ,headers: {"Set-cookie" : cookie}} );
+    const response = NextResponse.json({...newUser , token} , { status: 201  ,headers: {"Set-cookie" : cookie}} );
+    applyCors(response);
+    return response;
   } catch (err) {
-    return NextResponse.json(
+    const response = NextResponse.json(
       { message: "internal server error" },
       { status: 500 }
     );
+    applyCors(response);
+    return response;
   }
 }

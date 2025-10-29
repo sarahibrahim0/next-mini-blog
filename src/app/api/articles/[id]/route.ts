@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { UpdateArticleDto } from "@/utils/dtos";
 import prisma from "@/utils/db";
 import { verifyToken } from "@/utils/verifyToken";
+import { applyCors } from '@/lib/cors'
+
+export async function OPTIONS() {
+  const response = new NextResponse(null, { status: 200 });
+  applyCors(response);
+  return response;
+}
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -19,10 +26,12 @@ export async function GET(request: NextRequest, { params }: Props) {
     const parsedId = parseInt(id);
 
     if (isNaN(parsedId)) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { message: "invalid article id" },
         { status: 400 }
       );
+      applyCors(response);
+      return response;
     }
 
     const article = await prisma.article.findUnique({
@@ -44,18 +53,24 @@ export async function GET(request: NextRequest, { params }: Props) {
     });
 
     if (!article) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { message: "article not found" },
         { status: 404 }
       );
+      applyCors(response);
+      return response;
     }
 
-    return NextResponse.json(article, { status: 200 });
+    const response = NextResponse.json(article, { status: 200 });
+    applyCors(response);
+    return response;
   } catch (error) {
-    return NextResponse.json(
+    const response = NextResponse.json(
       { message: "internal server error" },
       { status: 500 }
     );
+    applyCors(response);
+    return response;
   }
 }
 
@@ -69,10 +84,12 @@ export async function PUT(request: NextRequest, { params }: Props) {
   try {
     const user = verifyToken(request);
     if (user === null || user.isAdmin === false) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { message: "only admin, access denied" },
         { status: 403 }
       );
+      applyCors(response);
+      return response;
     }
 
     const { id } = await params;
@@ -95,10 +112,12 @@ export async function PUT(request: NextRequest, { params }: Props) {
     });
 
     if (!article) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { message: "article not found" },
         { status: 404 }
       );
+      applyCors(response);
+      return response;
     }
 
     const body = (await request.json()) as UpdateArticleDto;
@@ -110,12 +129,16 @@ export async function PUT(request: NextRequest, { params }: Props) {
       },
     });
 
-    return NextResponse.json(updatedArticle, { status: 200 });
+    const response = NextResponse.json(updatedArticle, { status: 200 });
+    applyCors(response);
+    return response;
   } catch (error) {
-    return NextResponse.json(
+    const response = NextResponse.json(
       { message: "internal server error" },
       { status: 500 }
     );
+    applyCors(response);
+    return response;
   }
 }
 
@@ -129,30 +152,38 @@ export async function DELETE(request: NextRequest, { params }: Props) {
   try {
     const user = verifyToken(request);
     if (user === null || user.isAdmin === false) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { message: "only admin, access denied" },
         { status: 403 }
       );
+      applyCors(response);
+      return response;
     }
 
     const { id } = await params;
     const article = await prisma.article.findUnique({
       where: { id: parseInt(id) }    });
     if (!article) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { message: "article not found" },
         { status: 404 }
       );
+      applyCors(response);
+      return response;
     }
 
     // deleting the article
     await prisma.article.delete({ where: { id: parseInt(id) } });
 
-    return NextResponse.json({ message: "article deleted" }, { status: 200 });
+    const response = NextResponse.json({ message: "article deleted" }, { status: 200 });
+    applyCors(response);
+    return response;
   } catch (error) {
-    return NextResponse.json(
+    const response = NextResponse.json(
       { message: "internal server error" },
       { status: 500 }
     );
+    applyCors(response);
+    return response;
   }
 }

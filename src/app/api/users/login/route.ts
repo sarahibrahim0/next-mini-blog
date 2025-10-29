@@ -5,13 +5,20 @@ import prisma from "@/utils/db";
 import bcrypt from "bcryptjs";
 import { generateJWT, setCookie } from "@/utils/generateToken";
 import { JWTPayload } from "@/utils/types";
+import { applyCors } from '@/lib/cors'
+
+export async function OPTIONS() {
+  const response = new NextResponse(null, { status: 200 });
+  applyCors(response);
+  return response;
+}
 
 export async function POST(req: NextRequest ) {
   try {
     const body = (await req.json()) as LoginUserDto;
     const validation = loginSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         {
           message: validation?.error.issues
             .map((issue) => issue.message)
@@ -19,6 +26,8 @@ export async function POST(req: NextRequest ) {
         },
         { status: 400 }
       );
+      applyCors(response);
+      return response;
     }
     const user = await prisma.user.findUnique({
       where: {
@@ -26,20 +35,24 @@ export async function POST(req: NextRequest ) {
       },
     });
     if (!user) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { message: "user isn't registered" },
         { status: 400 }
       );
+      applyCors(response);
+      return response;
     }
 
     const salt = await bcrypt.genSalt(10);
     const isUser = await bcrypt.compare(body.password , user.password);
    
     if(!isUser){
-          return NextResponse.json(
+          const response = NextResponse.json(
         { message: "wrong email or password " },
         { status: 400 }
       );
+      applyCors(response);
+      return response;
     };
    
     const jwtPayload : JWTPayload = {
@@ -49,11 +62,15 @@ export async function POST(req: NextRequest ) {
     }
     const token = generateJWT(jwtPayload);
     const cookie = setCookie(jwtPayload);
-    return NextResponse.json({message: "user logged successfully", token} , { status: 200 , headers:{ "Set-cookie" : cookie}  } );
+    const response = NextResponse.json({message: "user logged successfully", token} , { status: 200 , headers:{ "Set-cookie" : cookie}  } );
+    applyCors(response);
+    return response;
   } catch (err) {
-    return NextResponse.json(
+    const response = NextResponse.json(
       { message: "internal server error"  },
       { status: 500 }
     );
+    applyCors(response);
+    return response;
   }
 }

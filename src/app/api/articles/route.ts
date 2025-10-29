@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { createArticleSchema } from "@/utils/validationSchemas";
 import prisma from "@/utils/db";
 import { verifyToken } from "@/utils/verifyToken";
+import { applyCors } from '@/lib/cors'
+
+export async function OPTIONS() {
+  const response = new NextResponse(null, { status: 200 });
+  applyCors(response);
+  return response;
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -37,7 +44,7 @@ export async function GET(request: NextRequest) {
     // 3️⃣ احسبي عدد الصفحات الكلي
     const totalPages = Math.ceil(totalCount / 6);
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         articles,
         totalPages,
@@ -45,11 +52,15 @@ export async function GET(request: NextRequest) {
       },
       { status: 200 }
     );
+    applyCors(response);
+    return response;
   } catch (err) {
-    return NextResponse.json(
+    const response = NextResponse.json(
       { message: "internal server error" },
       { status: 500 }
     );
+    applyCors(response);
+    return response;
   }
 }
 
@@ -58,24 +69,28 @@ export async function POST(request: NextRequest) {
     const user = verifyToken(request);
 
     if (!user) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { message: "you must register first" },
         { status: 403 }
       );
+      applyCors(response);
+      return response;
     }
 
     if (!user.isAdmin) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { message: "only admin can post" },
         { status: 403 }
       );
+      applyCors(response);
+      return response;
     }
 
     const body = await request.json();
 
     const validation = createArticleSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         {
           message: validation.error.issues
             .map((issue) => issue.message)
@@ -83,6 +98,8 @@ export async function POST(request: NextRequest) {
         },
         { status: 400 }
       );
+      applyCors(response);
+      return response;
     }
 
     const newArticle = await prisma.article.create({
@@ -92,11 +109,15 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(newArticle, { status: 201 });
+    const response = NextResponse.json(newArticle, { status: 201 });
+    applyCors(response);
+    return response;
   } catch (err) {
-    return NextResponse.json(
+    const response = NextResponse.json(
       { message: "internal server error" },
       { status: 500 }
     );
+    applyCors(response);
+    return response;
   }
 }

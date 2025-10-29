@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { applyCors } from '@/lib/cors'
 
 /**
  *  @method  GET
@@ -17,13 +18,16 @@ export function GET(request: NextRequest ) {
   // هنا بتحذفي الكوكي فعليًا
   response.cookies.delete("jwtToken");
 
+        applyCors(response);
         return response;
 
         
     } catch (error) {
-        return NextResponse.json(
+        const response = NextResponse.json(
             { message: 'internal server error' },
             { status: 500 }
-        )
+        );
+        applyCors(response);
+        return response;
     }
 }

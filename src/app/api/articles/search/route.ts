@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/utils/db';
+import { applyCors } from '@/lib/cors'
+
+export async function OPTIONS() {
+  const response = new NextResponse(null, { status: 200 });
+  applyCors(response);
+  return response;
+}
 
 /**
  *  @method  GET
@@ -13,10 +20,12 @@ export async function GET(request: NextRequest) {
 
     // ✅ لو المستخدم ما كتبش أي كلمة بحث
     if (!searchText || searchText.trim() === "") {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { message: "Please provide a search text" },
         { status: 400 }
       );
+      applyCors(response);
+      return response;
     }
 
     // ✅ البحث الجزئي عن المقالات
@@ -31,18 +40,24 @@ export async function GET(request: NextRequest) {
 
     // ✅ لو مفيش نتائج
     if (articles.length === 0) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { articles: [], message: "No results found" },
         { status: 200 } // 200 لأن العملية نجحت، بس مفيش بيانات
       );
+      applyCors(response);
+      return response;
     }
 
-    return NextResponse.json(articles, { status: 200 });
+    const response = NextResponse.json(articles, { status: 200 });
+    applyCors(response);
+    return response;
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
+    const response = NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }
     );
+    applyCors(response);
+    return response;
   }
 }

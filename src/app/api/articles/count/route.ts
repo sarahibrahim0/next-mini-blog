@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/utils/db';
+import { applyCors } from '@/lib/cors'
+
+export async function OPTIONS() {
+  const response = new NextResponse(null, { status: 200 });
+  applyCors(response);
+  return response;
+}
 
 
 /**
@@ -11,11 +18,15 @@ import prisma from '@/utils/db';
 export async function GET(request: NextRequest) {
     try {
         const count = await prisma.article.count();
-        return NextResponse.json({ count }, { status: 200 });
+        const response = NextResponse.json({ count }, { status: 200 });
+        applyCors(response);
+        return response;
     } catch (error) {
-        return NextResponse.json(
+        const response = NextResponse.json(
             { message: 'internal server error' },
             { status: 500 }
         );
+        applyCors(response);
+        return response;
     }
 }
