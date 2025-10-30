@@ -10,9 +10,10 @@ import { redirect } from "next/navigation";
 const AdminArticlesTable = async ({
   searchParams,
 }: {
-  searchParams?: { pageNum?: string };
+  searchParams: Promise<{ pageNum?: string }>;
 })=> {
-  const pageNum = searchParams?.pageNum ?? "1";
+  const { pageNum } = await searchParams;
+  const page = pageNum ?? "1";
 
   
  const cookieStore = await cookies();
@@ -20,7 +21,7 @@ const AdminArticlesTable = async ({
   const payload = verifyTokenForPage(token);
   if(!payload?.isAdmin) redirect("/");
 
-  const { articles, totalPages } = await getArticles(pageNum);
+  const { articles, totalPages } = await getArticles(page);
 
 
   return (
@@ -64,7 +65,7 @@ const AdminArticlesTable = async ({
         </tbody>
       </table>
       <Pagination
-        pageNumber={parseInt(pageNum)}
+        pageNumber={parseInt(page)}
         pages={totalPages}
         route="/admin/articles-table"
       />

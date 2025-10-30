@@ -3,12 +3,12 @@ import { Article } from '@/generated/prisma';
 import ArticleItem from '@/components/articles/ArticleItem';
 
 interface SearchArticlePageProps {
-  searchParams: { searchText: string };
+  searchParams: Promise<{ searchText: string }>;
 }
 
 const SearchArticlePage = async ({ searchParams} : SearchArticlePageProps) => {
 
-  const {searchText} = searchParams;
+  const {searchText} = await searchParams;
 
   let articles: Article[];
 
