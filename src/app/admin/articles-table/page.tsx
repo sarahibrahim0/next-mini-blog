@@ -8,11 +8,12 @@ import { verifyTokenForPage } from '@/utils/verifyToken';
 import { redirect } from "next/navigation";
 
 interface AdminArticlesTableProps {
-  searchParams: { pageNum: string };
+  searchParams?: { pageNum?: string };
 }
 
-const AdminArticlesTable = async ({ searchParams: { pageNum } }: AdminArticlesTableProps) => {
-
+const AdminArticlesTable = async ({ searchParams }: AdminArticlesTableProps) => {
+  const pageNum = searchParams?.pageNum ?? "1";
+  
  const cookieStore = await cookies();
   const token = cookieStore.get("jwtToken")?.value || "";
   const payload = verifyTokenForPage(token);
