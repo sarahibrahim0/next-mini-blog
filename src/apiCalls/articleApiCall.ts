@@ -11,7 +11,7 @@ export async function getArticles(pageNum: string | undefined): Promise<GetArtic
     const page = pageNum ?? "1"; // 👈 هنا بنخليها 1 افتراضيًا لو undefined
 
     const res = await fetch(
-    `http://localhost:3000/api/articles?pageNum=${page}`,{
+    `/api/articles?pageNum=${page}`,{
       cache: 'no-store'
     }
   );
@@ -30,7 +30,7 @@ export async function getArticles(pageNum: string | undefined): Promise<GetArtic
 export async function getArticlesBySearch(searchText : string)  : Promise<Article[]>
 {
 
-  const res =await fetch(`http://localhost:3000/api/articles/search?searchText=${encodeURIComponent(searchText)}`);
+  const res =await fetch(`/api/articles/search?searchText=${encodeURIComponent(searchText)}`);
     if (!res.ok) {
       throw new Error("Failed to fetch searched articles");
     }
@@ -48,7 +48,7 @@ interface Param {
 export async function getArticleById({id} : Param)  : Promise<SingleArticle>
 {
 
-  const res =await fetch(`http://localhost:3000/api/articles/${id}`);
+  const res =await fetch(`/api/articles/${id}`);
     if (!res.ok) {
       throw new Error("Failed to fetch searched articles");
     }

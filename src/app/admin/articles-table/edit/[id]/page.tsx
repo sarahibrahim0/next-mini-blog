@@ -5,17 +5,18 @@ import { cookies } from 'next/headers';
 import { verifyTokenForPage } from '@/utils/verifyToken';
 import { redirect } from "next/navigation";
 interface EditArticlePageProps {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
 const EditArticlePage = async ({ params } : EditArticlePageProps) => {
+  const { id } = await params;
 
   const cookieStore = await cookies();
   const token = cookieStore.get("jwtToken")?.value || "";
   const payload = verifyTokenForPage(token);
   if(!payload?.isAdmin) redirect("/");
 
-  const article: Article = await getArticleById(params);
+  const article: Article = await getArticleById({ id });
 
   return (
     <section className='fix-height flex items-center justify-center px-5 lg:px-20'>
