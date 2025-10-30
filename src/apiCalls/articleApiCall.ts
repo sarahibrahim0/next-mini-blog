@@ -1,6 +1,5 @@
 import { Article } from "@/generated/prisma";
 import { SingleArticle } from "@/utils/types";
-import { DOMAIN } from "@/utils/constants"; // 👈 هنعتمد عليه لتحديد الـ URL الكامل
 
 interface GetArticlesRes {
   articles: Article[];
@@ -12,7 +11,7 @@ interface GetArticlesRes {
 export async function getArticles(pageNum: string | undefined): Promise<GetArticlesRes> {
   const page = pageNum ?? "1";
 
-  const res = await fetch(`${DOMAIN}/api/articles?pageNum=${page}`, {
+  const res = await fetch(`/api/articles?pageNum=${page}`, {
     cache: "no-store",
     credentials: "include",
   });
@@ -26,7 +25,7 @@ export async function getArticles(pageNum: string | undefined): Promise<GetArtic
 
 // 🔍 Get articles by search text
 export async function getArticlesBySearch(searchText: string): Promise<Article[]> {
-  const res = await fetch(`${DOMAIN}/api/articles/search?searchText=${encodeURIComponent(searchText)}`, {
+  const res = await fetch(`/api/articles/search?searchText=${encodeURIComponent(searchText)}`, {
     cache: "no-store",
     credentials: "include",
   });
@@ -40,7 +39,7 @@ export async function getArticlesBySearch(searchText: string): Promise<Article[]
 
 // 📰 Get single article by ID
 export async function getArticleById(id: string): Promise<SingleArticle> {
-  const res = await fetch(`${DOMAIN}/api/articles/${id}`, {
+  const res = await fetch(`/api/articles/${id}`, {
     cache: "no-store",
     credentials: "include",
   });
