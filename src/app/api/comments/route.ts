@@ -21,7 +21,7 @@ export async function OPTIONS() {
  */
 export async function POST(request: NextRequest) {
     try {
-        const user = verifyToken(request);
+        const user =  verifyToken(request);
         if(!user) {
             const response = NextResponse.json(
                 { message: 'only logged in user, access denied' },

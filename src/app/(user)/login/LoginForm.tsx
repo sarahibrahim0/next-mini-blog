@@ -32,7 +32,9 @@ const LoginForm = () => {
   // ✅ 3. Submit Handler
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await axios.post("/api/users/login", data);
+      await axios.post("/api/users/login", data, {
+        withCredentials: true, // 👈 عشان الكوكي يتبعت ويتسجل في الـ browser
+      });
       toast.success("Login successful!");
       router.replace("/");
     } catch (error: any) {
