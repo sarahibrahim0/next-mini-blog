@@ -4,8 +4,6 @@ import { verifyToken } from '@/utils/verifyToken';
 import { UpdateUserDto } from '@/utils/dtos';
 import bcrypt from 'bcryptjs';
 import { updateUserSchema } from '@/utils/validationSchemas';
-import jwt from 'jsonwebtoken';
-import { JWTPayload } from '@/utils/types';
 import { applyCors } from '@/lib/cors'
 
 export async function OPTIONS() {
