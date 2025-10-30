@@ -43,7 +43,6 @@ export async function POST(req: NextRequest ) {
       return response;
     }
 
-    const salt = await bcrypt.genSalt(10);
     const isUser = await bcrypt.compare(body.password , user.password);
    
     if(!isUser){

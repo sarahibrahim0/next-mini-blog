@@ -14,6 +14,7 @@ export async function getArticles(pageNum: string | undefined): Promise<GetArtic
 
   const res = await fetch(`${DOMAIN}/api/articles?pageNum=${page}`, {
     cache: "no-store",
+    credentials: "include",
   });
 
   if (!res.ok) {
@@ -27,6 +28,7 @@ export async function getArticles(pageNum: string | undefined): Promise<GetArtic
 export async function getArticlesBySearch(searchText: string): Promise<Article[]> {
   const res = await fetch(`${DOMAIN}/api/articles/search?searchText=${encodeURIComponent(searchText)}`, {
     cache: "no-store",
+    credentials: "include",
   });
 
   if (!res.ok) {
@@ -40,6 +42,7 @@ export async function getArticlesBySearch(searchText: string): Promise<Article[]
 export async function getArticleById(id: string): Promise<SingleArticle> {
   const res = await fetch(`${DOMAIN}/api/articles/${id}`, {
     cache: "no-store",
+    credentials: "include",
   });
 
   if (!res.ok) {

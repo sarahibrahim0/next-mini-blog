@@ -8,6 +8,7 @@ export async function getAllComments(token: string): Promise<Comment[]> {
       Cookie: `jwtToken=${token}`,
     },
     cache: "no-store", // عشان يمنع الكاش خصوصًا في البيانات المتغيرة
+    credentials: "include",
   });
 
   if (!response.ok) {

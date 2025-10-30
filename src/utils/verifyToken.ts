@@ -24,7 +24,6 @@ export function verifyTokenForPage(token: string): JWTPayload | null {
         const privateKey = process.env.JWT_SECRET as string;
         const userPayload = jwt.verify(token, privateKey) as JWTPayload;
         if(!userPayload) return null;
-
         return userPayload;
     } catch (error) {
         return null;
