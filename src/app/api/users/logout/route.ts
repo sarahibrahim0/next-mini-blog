@@ -8,7 +8,7 @@ import { applyCors } from '@/lib/cors'
  *  @desc    Logout User
  *  @access  public
  */
-export function GET(request: NextRequest ) {
+export async function GET(request: NextRequest ) {
     try {
          const response = NextResponse.json(
     { message: "logout success" },
@@ -16,12 +16,12 @@ export function GET(request: NextRequest ) {
   );
 
   // هنا بتحذفي الكوكي فعليًا
-  response.cookies.delete("jwtToken");
+  response.cookies.set("jwtToken", "", { maxAge: 0 });
 
         applyCors(response);
         return response;
 
-        
+
     } catch (error) {
         const response = NextResponse.json(
             { message: 'internal server error' },

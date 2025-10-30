@@ -1,5 +1,4 @@
 "use client";
-import axios from "axios";
 import { DOMAIN } from '@/utils/constants';
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -8,9 +7,16 @@ const LogoutButton = () => {
   const router = useRouter();
   const logoutHandler = async () => {
     try {
-        await axios.get(`${DOMAIN}/api/users/logout`);
-        router.push("/");
-        router.refresh();
+        const response = await fetch(`${DOMAIN}/api/users/logout`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+        if (response.ok) {
+          router.push("/");
+          router.refresh();
+        } else {
+          toast.warning("Something went wrong");
+        }
     } catch (error) {
         toast.warning("Something went wrong");
         console.log(error);
