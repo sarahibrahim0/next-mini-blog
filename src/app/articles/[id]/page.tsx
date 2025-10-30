@@ -6,13 +6,13 @@ import { getArticleById } from '@/apiCalls/articleApiCall';
 import { SingleArticle } from '@/utils/types';
 
 interface Props {
-  params :{ id : string}
+  params : Promise<{ id : string}>
 }
 
 const SingleArticlePage = async ({params} : Props) => {
+  const { id } = await params;
 
-
-const article : SingleArticle =  await getArticleById(params);
+const article : SingleArticle =  await getArticleById(id);
   
   return (
     <section className="fix-height container m-auto w-full px-5 pt-8 md:w-3/4 ">

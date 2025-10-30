@@ -37,7 +37,7 @@ export async function getArticlesBySearch(searchText: string): Promise<Article[]
 }
 
 // 📰 Get single article by ID
-export async function getArticleById({ id }: { id: string }): Promise<SingleArticle> {
+export async function getArticleById(id: string): Promise<SingleArticle> {
   const res = await fetch(`${DOMAIN}/api/articles/${id}`, {
     cache: "no-store",
   });
