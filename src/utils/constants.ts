@@ -1,5 +1,4 @@
 export const ARTICLE_PER_PAGE = 6;
-
 const PRODUCTION_DOMAIN = "https://next-mini-blog-6zdo.vercel.app";
 const DEVELOPMENT_DOMAIN = "http://localhost:3000";
 

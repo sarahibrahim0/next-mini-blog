@@ -4,6 +4,7 @@ import {Article} from '@/generated/prisma'
 import CommentItem from '@/components/comments/CommentItem';
 import { getArticleById } from '@/apiCalls/articleApiCall';
 import { SingleArticle } from '@/utils/types';
+import { notFound } from 'next/navigation';
 
 interface Props {
   params : Promise<{ id : string}>
@@ -13,6 +14,9 @@ const SingleArticlePage = async ({params} : Props) => {
   const { id } = await params;
 
 const article : SingleArticle =  await getArticleById(id);
+if(!article){
+  notFound()
+}
   
   return (
     <section className="fix-height container m-auto w-full px-5 pt-8 md:w-3/4 ">
