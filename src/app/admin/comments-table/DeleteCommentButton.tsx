@@ -14,7 +14,7 @@ const DeleteCommentButton = ({ commentId }: DeleteCommentButtonProps) => {
   const deleteCommentHandler = async () => {
     try {
       if (confirm("you want to delete this comment, Are you sure?")) {
-        await axios.delete(`${DOMAIN}/api/comments/${commentId}`);
+        await axios.delete(`${DOMAIN}/api/comments/${commentId}`, { withCredentials: true });
         router.refresh();
         toast.success("comment deleted");
       }

@@ -20,7 +20,7 @@ const CommentItem = ({ userId , comment }: CommentItemProps) => {
   const commentDeleteHandler = async () => {
     try {
       if(confirm("you want delete this comment, Are you sure?")) {
-        await axios.delete(`${DOMAIN}/api/comments/${comment.id}`);
+        await axios.delete(`${DOMAIN}/api/comments/${comment.id}`, { withCredentials: true });
         router.refresh();
       }
     } catch (error:any) {

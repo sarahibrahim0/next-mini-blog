@@ -16,7 +16,7 @@ const AddArticleForm = () => {
         if (description === "") return toast.error("Description is required");
 
         try {
-            await axios.post(`${DOMAIN}/api/articles`, { title, description });
+            await axios.post(`${DOMAIN}/api/articles`, { title, description }, { withCredentials: true });
             setTitle("");
             setDescription("");
             toast.success("New article added");

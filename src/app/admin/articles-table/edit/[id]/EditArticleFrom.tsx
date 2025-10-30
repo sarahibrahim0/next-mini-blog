@@ -23,7 +23,7 @@ const EditArticleForm =  ({ article } : EditArticleFormProps) => {
         if (description === "") return toast.error("Description is required");
 
         try {
-            await axios.put(`${DOMAIN}/api/articles/${article.id}`, { title, description });
+            await axios.put(`${DOMAIN}/api/articles/${article.id}`, { title, description }, { withCredentials: true });
             toast.success("article updated");
             router.refresh();
         } catch (error:any) {

@@ -18,7 +18,7 @@ const AddCommentForm = ({ articleId } : AddCommentFormProps) => {
         if(text === "") return toast.error("Please write something");
         
         try {
-            await axios.post(`${DOMAIN}/api/comments`, { text, articleId });
+            await axios.post(`${DOMAIN}/api/comments`, { text, articleId }, { withCredentials: true });
             router.refresh();
             setText("");
         } catch (error:any) {

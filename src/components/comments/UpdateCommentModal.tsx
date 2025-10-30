@@ -21,7 +21,7 @@ const UpdateCommentModal = ({ setOpen, text, commentId } : UpdateCommentModalPro
         if(updatedText === "") return toast.info("Please write something");
 
         try {
-            await axios.put(`${DOMAIN}/api/comments/${commentId}`, { text: updatedText });
+            await axios.put(`${DOMAIN}/api/comments/${commentId}`, { text: updatedText }, { withCredentials: true });
             router.refresh();
             setUpdatedText("");
             setOpen(false);

@@ -43,7 +43,7 @@ const RegisterForm = () => {
     try {
       setLoading(true);
       console.log(data);
-      await axios.post("/api/users/register", data);
+      await axios.post("/api/users/register", data, { withCredentials: true });
       toast.success("Registered successfully!");
       router.replace("/login");
       router.refresh();
