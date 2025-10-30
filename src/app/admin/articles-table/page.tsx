@@ -7,12 +7,13 @@ import { cookies } from 'next/headers';
 import { verifyTokenForPage } from '@/utils/verifyToken';
 import { redirect } from "next/navigation";
 
-interface AdminArticlesTableProps {
+const AdminArticlesTable = async ({
+  searchParams,
+}: {
   searchParams?: { pageNum?: string };
-}
-
-const AdminArticlesTable = async ({ searchParams }: AdminArticlesTableProps) => {
+})=> {
   const pageNum = searchParams?.pageNum ?? "1";
+
   
  const cookieStore = await cookies();
   const token = cookieStore.get("jwtToken")?.value || "";
