@@ -16,7 +16,15 @@ export async function GET(request: NextRequest ) {
   );
 
   // هنا بتحذفي الكوكي فعليًا
-  response.cookies.delete("jwtToken");
+    response.cookies.set({
+      name: "jwtToken",
+      value: "",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "lax" : "strict",
+      path: "/",
+      expires: new Date(0), // ❌ يلغيه فعليًا
+    });
 
         applyCors(response);
         return response;
