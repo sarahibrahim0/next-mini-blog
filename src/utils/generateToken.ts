@@ -27,3 +27,4 @@ export function setCookie(jwtPayload: JWTPayload): string {
 
     return cookie;
 }
+
