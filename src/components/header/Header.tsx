@@ -17,10 +17,10 @@ const  Header = async() => {
       <div className={styles.right}>
         {payload ? (
           <>
-            <Link href="/users/profile" className='text-blue-800 font-bold md:text-xl capitalize'>
+            <li  className='text-blue-800 font-bold md:text-xl capitalize'>
               {payload?.username}
-            </Link>
-            
+            </li>
+
             <LogoutButton />
           </>
         ) : (
