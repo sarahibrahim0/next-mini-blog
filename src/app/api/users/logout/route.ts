@@ -16,7 +16,7 @@ export async function GET(request: NextRequest ) {
   );
 
   // هنا بتحذفي الكوكي فعليًا
-  response.cookies.set("jwtToken", "", { maxAge: 0 });
+  response.cookies.delete("jwtToken");
 
         applyCors(response);
         return response;
