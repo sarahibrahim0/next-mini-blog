@@ -1,10 +1,9 @@
 import AddCommentForm from '@/components/comments/AddCommentForm';
 import React from 'react';
-import {Article} from '@/generated/prisma'
 import CommentItem from '@/components/comments/CommentItem';
 import { getArticleById } from '@/apiCalls/articleApiCall';
 import { SingleArticle } from '@/utils/types';
-import { notFound } from 'next/navigation';
+import {  redirect } from 'next/navigation';
 
 interface Props {
   params : Promise<{ id : string}>
@@ -15,7 +14,7 @@ const SingleArticlePage = async ({params} : Props) => {
 
 const article : SingleArticle =  await getArticleById(id);
 if(!article){
-  notFound()
+ redirect('/not-found')
 }
   
   return (
